@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DailyBasket – Grocery Ordering System</title>
+    
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/images/dailybasket-logo.png">
+
+    <style>
+        :root {
+            --primary: #198754;
+            --primary-hover: #157347;
+            --primary-light: #e8f5e9;
+            --dark: #0f172a;
+            --slate: #334155;
+            --light-bg: #f8fafc;
+            --border-color: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--light-bg);
+            color: var(--slate);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Announcement Bar */
+        .top-notice-bar {
+            background: linear-gradient(90deg, #0f5132 0%, #198754 100%);
+            color: #ffffff;
+            font-size: 0.8rem;
+            padding: 6px 0;
+            text-align: center;
+        }
+
+        /* Navbar */
+        .db-navbar {
+            background-color: #ffffff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+            padding: 0.75rem 0;
+        }
+        .db-brand-img {
+            height: 48px;
+            width: auto;
+            object-fit: contain;
+        }
+        .db-cart-btn {
+            position: relative;
+            background-color: var(--primary-light);
+            color: var(--primary);
+            font-weight: 600;
+            border: 1px solid rgba(25, 135, 84, 0.2);
+            border-radius: 999px;
+            padding: 0.45rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+        }
+        .db-cart-btn:hover {
+            background-color: var(--primary);
+            color: #ffffff;
+        }
+        .db-cart-badge {
+            background-color: #dc3545;
+            color: #ffffff;
+            font-size: 0.75rem;
+            font-weight: 700;
+            border-radius: 999px;
+            padding: 2px 7px;
+        }
+
+        /* Hero */
+        .db-hero {
+            background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);
+            padding: 3.5rem 0 3rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .db-hero-title {
+            font-size: 2.75rem;
+            font-weight: 800;
+            color: var(--dark);
+            line-height: 1.15;
+            letter-spacing: -0.02em;
+        }
+        .db-hero-subtitle {
+            font-size: 1.1rem;
+            color: #64748b;
+            line-height: 1.6;
+        }
+        .db-hero-img-box {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 1.25rem;
+            padding: 1.5rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+
+        /* Category Filter Pills */
+        .category-pill {
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            color: var(--slate);
+            border-radius: 999px;
+            padding: 0.45rem 1rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+        }
+        .category-pill:hover, .category-pill.active {
+            background-color: var(--primary);
+            color: #ffffff;
+            border-color: var(--primary);
+            box-shadow: 0 4px 6px -1px rgba(25, 135, 84, 0.25);
+        }
+
+        /* Product Cards */
+        .product-card {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 1rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+            border-color: #cbd5e1;
+        }
+        .product-img-wrap {
+            position: relative;
+            background-color: #ffffff;
+            border-radius: 0.75rem;
+            padding: 0.5rem;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 1px solid #f1f5f9;
+        }
+        .product-img {
+            max-height: 100%;
+            max-width: 100%;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+        }
+        .product-card:hover .product-img {
+            transform: scale(1.05);
+        }
+        .stock-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 999px;
+        }
+        .stock-badge.in-stock {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+        .stock-badge.low-stock {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+        .stock-badge.out-stock {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Stepper */
+        .stepper-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: #ffffff;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .stepper-btn:hover {
+            background: #f1f5f9;
+        }
+        .stepper-val {
+            width: 36px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border: none;
+            background: transparent;
+        }
+
+        /* Footer */
+        .db-footer {
+            background-color: var(--dark);
+            color: #94a3b8;
+            margin-top: auto;
+            padding: 3.5rem 0 1.5rem;
+        }
+        .db-footer a {
+            color: #94a3b8;
+            text-decoration: none;
+            transition: color 0.15s;
+        }
+        .db-footer a:hover {
+            color: #ffffff;
+        }
+
+        /* Order Tracker Progress Bar */
+        .tracker-steps {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin: 2rem 0;
+        }
+        .tracker-steps::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 5%;
+            right: 5%;
+            height: 4px;
+            background: #e2e8f0;
+            z-index: 1;
+        }
+        .tracker-progress-line {
+            position: absolute;
+            top: 20px;
+            left: 5%;
+            height: 4px;
+            background: var(--primary);
+            z-index: 2;
+            transition: width 0.4s ease;
+        }
+        .tracker-step {
+            position: relative;
+            z-index: 3;
+            text-align: center;
+            flex: 1;
+        }
+        .tracker-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 3px solid #cbd5e1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: #64748b;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        .tracker-step.completed .tracker-icon {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #ffffff;
+        }
+        .tracker-step.active .tracker-icon {
+            background: #ffffff;
+            border-color: var(--primary);
+            color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(25, 135, 84, 0.2);
+        }
+        .tracker-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #64748b;
+        }
+        .tracker-step.completed .tracker-label,
+        .tracker-step.active .tracker-label {
+            color: var(--dark);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Announcement Bar -->
+    <div class="top-notice-bar">
+        <div class="container d-flex justify-content-between align-items-center">
+            <span><i class="bi bi-patch-check-fill me-1"></i> Welcome to <strong>DailyBasket</strong> – Daily Essentials, Delivered Fresh</span>
+            <span class="d-none d-md-inline"><i class="bi bi-truck me-1"></i> Free Delivery on all orders above ₹500!</span>
+        </div>
+    </div>
+
+    <!-- Navigation Header -->
+    <nav class="navbar navbar-expand-lg db-navbar sticky-top">
+        <div class="container">
+            <a class="navbar-brand py-0 me-3" href="#home" onclick="resetFilters()">
+                <img src="assets/images/dailybasket-logo.png" alt="DailyBasket Logo" class="db-brand-img">
+            </a>
+
+            <!-- Search input in navbar -->
+            <div class="d-none d-md-flex flex-grow-1 mx-3" style="max-width: 420px;">
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                    <input type="text" id="searchInput" class="form-control bg-light border-start-0" placeholder="Search rice, tomatoes, milk, fruits..." oninput="handleSearch()">
+                </div>
+            </div>
+
+            <div class="d-flex align-items-center gap-2 ms-auto">
+                <button class="btn btn-sm btn-outline-secondary d-none d-sm-inline-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#adminModal">
+                    <i class="bi bi-shield-lock text-success"></i> Admin Panel
+                </button>
+                <button class="db-cart-btn" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas">
+                    <i class="bi bi-cart3 fs-5"></i>
+                    <span class="d-none d-sm-inline">Cart</span>
+                    <span class="db-cart-badge" id="cartCountBadge">0</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Search Bar -->
+    <div class="container d-md-none py-2 bg-white border-bottom">
+        <div class="input-group input-group-sm">
+            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-search"></i></span>
+            <input type="text" id="mobileSearchInput" class="form-control bg-light border-start-0" placeholder="Search groceries..." oninput="handleMobileSearch()">
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section id="home" class="db-hero">
+        <div class="container">
+            <div class="row align-items-center g-4">
+                <div class="col-lg-6">
+                    <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill fw-bold mb-3 d-inline-flex align-items-center gap-1">
+                        <i class="bi bi-check-circle-fill"></i> PS29 – Simple Grocery Ordering System
+                    </span>
+                    <h1 class="db-hero-title mb-3">Fresh Groceries, Delivered Simply.</h1>
+                    <p class="db-hero-subtitle mb-4">
+                        Discover 100% farm-fresh fruits, organic vegetables, pure dairy, premium grains, and pantry snacks at <strong>DailyBasket</strong>. Instant checkout, cash/UPI on delivery, and live 5-stage order tracking.
+                    </p>
+                    <div class="d-flex flex-wrap gap-3">
+                        <a href="#catalog" class="btn btn-success btn-lg px-4 fw-bold shadow-sm">
+                            <i class="bi bi-bag-check me-2"></i>Browse Products
+                        </a>
+                        <button class="btn btn-outline-success btn-lg px-4 fw-bold" onclick="filterCategory('Fruits')">
+                            <i class="bi bi-apple me-2"></i>Fresh Fruits
+                        </button>
+                    </div>
+
+                    <!-- Trust Metrics -->
+                    <div class="row mt-4 pt-3 border-top g-3">
+                        <div class="col-4">
+                            <h4 class="fw-bold text-success mb-0">27+</h4>
+                            <small class="text-muted">Exact Products</small>
+                        </div>
+                        <div class="col-4">
+                            <h4 class="fw-bold text-success mb-0">₹500</h4>
+                            <small class="text-muted">Free Delivery Tier</small>
+                        </div>
+                        <div class="col-4">
+                            <h4 class="fw-bold text-success mb-0">5-Stage</h4>
+                            <small class="text-muted">Live Order Tracking</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6 text-center">
+                    <div class="db-hero-img-box">
+                        <img src="assets/images/dailybasket-logo.png" alt="DailyBasket Store" class="img-fluid" style="max-height: 290px; object-fit: contain;">
+                        <div class="p-3 bg-light rounded-3 mt-3 d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="bi bi-truck-front-fill text-success fs-3"></i>
+                                <div class="text-start">
+                                    <div class="fw-bold text-dark small">Superfast Delivery</div>
+                                    <div class="text-muted" style="font-size: 0.75rem;">Guaranteed doorstep dispatch</div>
+                                </div>
+                            </div>
+                            <span class="badge bg-success">Open Now</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Category Filter Bar -->
+    <section class="py-3 bg-white border-bottom sticky-top" style="top: 70px; z-index: 1020;">
+        <div class="container">
+            <div class="d-flex gap-2 overflow-x-auto pb-1" id="categoryPills">
+                <button class="category-pill active" onclick="filterCategory('All')">All Groceries (27)</button>
+                <button class="category-pill" onclick="filterCategory('Fruits')">🍎 Fruits</button>
+                <button class="category-pill" onclick="filterCategory('Vegetables')">🥦 Vegetables</button>
+                <button class="category-pill" onclick="filterCategory('Dairy')">🥛 Dairy</button>
+                <button class="category-pill" onclick="filterCategory('Rice & Grains')">🌾 Rice &amp; Grains</button>
+                <button class="category-pill" onclick="filterCategory('Snacks')">🍪 Snacks</button>
+                <button class="category-pill" onclick="filterCategory('Beverages')">☕ Beverages</button>
+                <button class="category-pill" onclick="filterCategory('Bakery')">🍞 Bakery</button>
+                <button class="category-pill" onclick="filterCategory('Household')">🧼 Household</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Catalog -->
+    <main id="catalog" class="container py-4 flex-grow-1">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h4 class="fw-bold mb-0 text-dark" id="catalogTitle">Grocery Catalog</h4>
+                <small class="text-muted" id="catalogCount">Showing all 27 products</small>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <label class="small text-muted d-none d-sm-inline">Sort by:</label>
+                <select id="sortSelect" class="form-select form-select-sm" style="width: auto;" onchange="renderProducts()">
+                    <option value="default">Featured</option>
+                    <option value="price-asc">Price: Low to High</option>
+                    <option value="price-desc">Price: High to Low</option>
+                    <option value="name-asc">Product Name (A-Z)</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Products Grid Container -->
+        <div class="row g-3 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4" id="productsGrid">
+            <!-- Injected by JavaScript -->
+        </div>
+    </main>
+
+    <!-- Cart Offcanvas (Drawer) -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="cartOffcanvas" aria-labelledby="cartOffcanvasLabel" style="width: 420px;">
+        <div class="offcanvas-header border-bottom">
+            <h5 class="offcanvas-title fw-bold" id="cartOffcanvasLabel">
+                <i class="bi bi-cart3 text-success me-2"></i>Your Shopping Cart
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body d-flex flex-direction-column flex-column" id="cartBody">
+            <div id="cartItemsList" class="flex-grow-1 overflow-auto">
+                <!-- Cart items injected here -->
+            </div>
+
+            <!-- Free Delivery Progress Bar -->
+            <div class="p-3 bg-light rounded-3 my-3" id="deliveryTierBox">
+                <div class="d-flex justify-content-between small fw-bold mb-1">
+                    <span id="deliveryTierText">Add ₹500.00 for FREE Delivery</span>
+                    <span id="deliveryTierPercent">0%</span>
+                </div>
+                <div class="progress" style="height: 6px;">
+                    <div class="progress-bar bg-success" id="deliveryTierBar" role="progressbar" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Totals & Checkout -->
+            <div class="border-top pt-3">
+                <div class="d-flex justify-content-between small text-muted mb-1">
+                    <span>Subtotal:</span>
+                    <span class="fw-semibold text-dark" id="cartSubtotalText">₹0.00</span>
+                </div>
+                <div class="d-flex justify-content-between small text-muted mb-2">
+                    <span>Delivery Charge:</span>
+                    <span class="fw-semibold" id="cartDeliveryText">₹30.00</span>
+                </div>
+                <div class="d-flex justify-content-between fw-bold fs-5 text-dark mb-3 pt-2 border-top">
+                    <span>Total Amount:</span>
+                    <span class="text-success" id="cartTotalText">₹0.00</span>
+                </div>
+                <button class="btn btn-success w-100 py-2 fw-bold shadow-sm" id="checkoutBtn" onclick="openCheckoutModal()" disabled>
+                    <i class="bi bi-lock-fill me-1"></i>Proceed to Checkout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div class="modal fade" id="checkoutModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4 border-0 shadow">
+                <div class="modal-header border-bottom">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-geo-alt-fill text-success me-2"></i>Delivery Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="checkoutForm" onsubmit="handlePlaceOrder(event)">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Full Name <span class="text-danger">*</span></label>
+                            <input type="text" id="custName" class="form-control" required placeholder="e.g. Rahul Sharma" value="Rahul Sharma">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Phone Number <span class="text-danger">*</span></label>
+                            <input type="tel" id="custPhone" class="form-control" required placeholder="10-digit mobile number" value="9876543210">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Delivery Address <span class="text-danger">*</span></label>
+                            <textarea id="custAddress" class="form-control" rows="2" required placeholder="House/Flat No, Apartment, Street name">Flat 402, Green Meadows, MG Road</textarea>
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-7">
+                                <label class="form-label small fw-bold">City <span class="text-danger">*</span></label>
+                                <input type="text" id="custCity" class="form-control" required value="Mumbai">
+                            </div>
+                            <div class="col-5">
+                                <label class="form-label small fw-bold">Pincode <span class="text-danger">*</span></label>
+                                <input type="text" id="custPincode" class="form-control" required value="400053">
+                            </div>
+                        </div>
+                        <div class="mb-3 p-3 bg-light rounded border">
+                            <label class="form-label small fw-bold d-block mb-1">Payment Method</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="payMethod" id="codPay" checked>
+                                <label class="form-check-label small" for="codPay">
+                                    <i class="bi bi-cash-stack text-success me-1"></i> Cash on Delivery (COD) / UPI at doorstep
+                                </label>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center pt-2 border-top">
+                            <div>
+                                <small class="text-muted d-block">Payable Amount:</small>
+                                <strong class="fs-5 text-success" id="modalPayableText">₹0.00</strong>
+                            </div>
+                            <button type="submit" class="btn btn-success px-4 py-2 fw-bold">Confirm &amp; Place Order</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Tracking & Confirmation Modal -->
+    <div class="modal fade" id="orderSuccessModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content rounded-4 border-0 shadow">
+                <div class="modal-body p-4 text-center">
+                    <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center mb-3 shadow" style="width: 60px; height: 60px;">
+                        <i class="bi bi-check-lg fs-1"></i>
+                    </div>
+                    <h4 class="fw-bold text-dark mb-1">Grocery Order Confirmed!</h4>
+                    <p class="text-muted small mb-3">Thank you for ordering with DailyBasket. Order <strong id="successOrderId">#DB-1001</strong> has been placed.</p>
+
+                    <!-- 5-Stage Live Order Tracker -->
+                    <div class="p-3 bg-light rounded-3 border text-start mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-radar text-success me-1"></i>Live Order Status</h6>
+                            <span class="badge bg-success" id="trackerStatusBadge">Pending</span>
+                        </div>
+                        
+                        <div class="tracker-steps" id="trackerStepsContainer">
+                            <div class="tracker-progress-line" id="trackerProgressLine" style="width: 0%;"></div>
+                            <div class="tracker-step completed" id="step-0">
+                                <div class="tracker-icon"><i class="bi bi-receipt"></i></div>
+                                <div class="tracker-label">Pending</div>
+                            </div>
+                            <div class="tracker-step" id="step-1">
+                                <div class="tracker-icon"><i class="bi bi-check2-circle"></i></div>
+                                <div class="tracker-label">Confirmed</div>
+                            </div>
+                            <div class="tracker-step" id="step-2">
+                                <div class="tracker-icon"><i class="bi bi-box-seam"></i></div>
+                                <div class="tracker-label">Preparing</div>
+                            </div>
+                            <div class="tracker-step" id="step-3">
+                                <div class="tracker-icon"><i class="bi bi-bag-check"></i></div>
+                                <div class="tracker-label">Ready</div>
+                            </div>
+                            <div class="tracker-step" id="step-4">
+                                <div class="tracker-icon"><i class="bi bi-truck"></i></div>
+                                <div class="tracker-label">Delivered</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Order Items Summary Table -->
+                    <div class="table-responsive text-start border rounded mb-3">
+                        <table class="table table-sm align-middle mb-0 small">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Price</th>
+                                    <th>Qty</th>
+                                    <th class="text-end">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody id="successItemsBody"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <button class="btn btn-outline-secondary btn-sm" onclick="advanceOrderStatus()">
+                            <i class="bi bi-arrow-clockwise me-1"></i>Simulate Next Status Stage
+                        </button>
+                        <button class="btn btn-success btn-sm px-4 fw-bold" data-bs-dismiss="modal">Continue Shopping</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Modal -->
+    <div class="modal fade" id="adminModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content rounded-4 border-0 shadow">
+                <div class="modal-header border-bottom">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-shield-lock-fill text-success me-2"></i>Administrator Control Simulator</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted small">
+                        This view allows testing admin grocery management on static environments (e.g. GitHub Pages). The full-stack PHP &amp; MySQL administrative suite is also available in the repository.
+                    </p>
+                    <div class="table-responsive" style="max-height: 380px;">
+                        <table class="table table-hover align-middle small mb-0">
+                            <thead class="table-light sticky-top">
+                                <tr>
+                                    <th>Image</th>
+                                    <th>Product</th>
+                                    <th>Category</th>
+                                    <th>Price</th>
+                                    <th>Stock</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminProductsTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="db-footer">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="bg-white px-2 py-1 rounded-3 d-inline-block mb-3 shadow-sm">
+                        <img src="assets/images/dailybasket-logo.png" alt="DailyBasket Logo" style="height: 52px; width: auto; object-fit: contain;">
+                    </div>
+                    <p class="small text-secondary pe-lg-3">
+                        “Daily Essentials, Delivered Fresh.” Farm-fresh fruits, organic vegetables, pure dairy, premium grains, and pantry goods delivered promptly to your doorstep.
+                    </p>
+                    <div class="d-flex gap-2">
+                        <span class="badge bg-dark border border-secondary"><i class="bi bi-shield-check text-success me-1"></i>100% Quality Assured</span>
+                        <span class="badge bg-dark border border-secondary"><i class="bi bi-truck text-success me-1"></i>Doorstep Delivery</span>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 col-6">
+                    <h6 class="text-white fw-bold mb-3">Quick Navigation</h6>
+                    <ul class="list-unstyled small d-flex flex-column gap-2">
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#catalog">Shop Catalog</a></li>
+                        <li><a href="javascript:void(0)" onclick="openCart()">Shopping Cart</a></li>
+                        <li><a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#adminModal">Admin Control</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6 col-6">
+                    <h6 class="text-white fw-bold mb-3">Grocery Categories</h6>
+                    <ul class="list-unstyled small d-flex flex-column gap-2">
+                        <li><a href="javascript:void(0)" onclick="filterCategory('Fruits')">Fresh Fruits</a></li>
+                        <li><a href="javascript:void(0)" onclick="filterCategory('Vegetables')">Organic Vegetables</a></li>
+                        <li><a href="javascript:void(0)" onclick="filterCategory('Dairy')">Milk &amp; Dairy</a></li>
+                        <li><a href="javascript:void(0)" onclick="filterCategory('Rice & Grains')">Rice, Atta &amp; Grains</a></li>
+                        <li><a href="javascript:void(0)" onclick="filterCategory('Bakery')">Fresh Bakery</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h6 class="text-white fw-bold mb-3">BIZ HACK'26 Project</h6>
+                    <p class="small text-secondary mb-2">
+                        <strong>Problem Statement:</strong> PS29 – Simple Grocery Ordering System<br>
+                        <strong>Team:</strong> Challengers (FSSD-033)
+                    </p>
+                    <div class="small text-muted">
+                        Developed with PHP, MySQL, Bootstrap 5.3, and custom studio photography.
+                    </div>
+                </div>
+            </div>
+            <div class="text-center pt-4 mt-4 border-top border-secondary border-opacity-25 small text-secondary">
+                DailyBasket &copy; 2026 &mdash; Daily Essentials, Delivered Fresh. Team Challengers.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5.3 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- DailyBasket Storefront Logic -->
+    <script>
+        // 27 Products with 1-to-1 Photorealistic Studio Assets
+        const PRODUCTS_DATA = [
+            { id: 1, name: "Royal Gala Apples", category: "Fruits", price: 180.00, stock: 45, unit: "kg", image: "assets/images/products/apple.jpg", description: "Crisp, sweet, and juicy imported red apples packed with vitamins." },
+            { id: 2, name: "Robusta Bananas", category: "Fruits", price: 50.00, stock: 60, unit: "dozen", image: "assets/images/products/banana.jpg", description: "Naturally ripened, energy-rich fresh bananas." },
+            { id: 3, name: "Nagpur Oranges", category: "Fruits", price: 90.00, stock: 30, unit: "kg", image: "assets/images/products/orange.jpg", description: "Sweet, tangy, vitamin-C rich citrus oranges." },
+            { id: 4, name: "Sweet Pomegranate (Anar)", category: "Fruits", price: 220.00, stock: 18, unit: "kg", image: "assets/images/products/pomegranate.jpg", description: "Deep ruby-red arils, super rich in antioxidants and iron." },
+            { id: 5, name: "Farm Fresh Tomatoes", category: "Vegetables", price: 40.00, stock: 5, unit: "kg", image: "assets/images/products/tomato.jpg", description: "Plump, firm, and ripe red hybrid cooking tomatoes." },
+            { id: 6, name: "Golden Potatoes", category: "Vegetables", price: 35.00, stock: 80, unit: "kg", image: "assets/images/products/potato.jpg", description: "Freshly harvested dirt-free versatile cooking potatoes." },
+            { id: 7, name: "Nashik Red Onions", category: "Vegetables", price: 45.00, stock: 75, unit: "kg", image: "assets/images/products/onion.jpg", description: "Pungent, crispy essential cooking onions." },
+            { id: 8, name: "Crunchy Orange Carrots", category: "Vegetables", price: 55.00, stock: 25, unit: "kg", image: "assets/images/products/carrot.jpg", description: "Tender and sweet local carrots, perfect for salads and cooking." },
+            { id: 9, name: "Green Capsicum (Bell Pepper)", category: "Vegetables", price: 65.00, stock: 0, unit: "kg", image: "assets/images/products/capsicum.jpg", description: "Fresh crunchy bell peppers for stir fries and curries." },
+            { id: 10, name: "Amul Taaza Toned Milk", category: "Dairy", price: 56.00, stock: 50, unit: "liter", image: "assets/images/products/milk.jpg", description: "Pasteurized homogenized toned milk pouch." },
+            { id: 11, name: "Fresh Creamy Curd (Dahi)", category: "Dairy", price: 40.00, stock: 35, unit: "500g", image: "assets/images/products/curd.jpg", description: "Thick, creamy set curd prepared from pure cow milk." },
+            { id: 12, name: "Amul Salted Butter", category: "Dairy", price: 58.00, stock: 40, unit: "100g", image: "assets/images/products/butter.jpg", description: "Iconic Indian salted table butter made from wholesome cream." },
+            { id: 13, name: "Processed Cheddar Cheese Slices", category: "Dairy", price: 140.00, stock: 20, unit: "pack", image: "assets/images/products/cheese.jpg", description: "Smooth melting cheese slices for burgers and sandwiches." },
+            { id: 14, name: "India Gate Basmati Rice Feast", category: "Rice & Grains", price: 130.00, stock: 60, unit: "kg", image: "assets/images/products/rice.jpg", description: "Aromatic aged long-grain basmati rice for biryanis." },
+            { id: 15, name: "Aashirvaad Shudh Chakki Atta", category: "Rice & Grains", price: 60.00, stock: 45, unit: "kg", image: "assets/images/products/wheat.jpg", description: "100% pure whole wheat grain flour with zero maida." },
+            { id: 16, name: "Refined White Sugar", category: "Rice & Grains", price: 48.00, stock: 100, unit: "kg", image: "assets/images/products/sugar.jpg", description: "Clean, sparkling sulphurless crystal sugar." },
+            { id: 17, name: "Fortune Sunlite Sunflower Oil", category: "Rice & Grains", price: 155.00, stock: 30, unit: "liter", image: "assets/images/products/cooking_oil.jpg", description: "Light and healthy enriched refined cooking sunflower oil." },
+            { id: 18, name: "Britannia Good Day Butter Biscuits", category: "Snacks", price: 35.00, stock: 50, unit: "pack", image: "assets/images/products/biscuits.jpg", description: "Rich butter cookies with delightful crunchy cashew bites." },
+            { id: 19, name: "Lay's India's Magic Masala Chips", category: "Snacks", price: 20.00, stock: 90, unit: "pack", image: "assets/images/products/chips.jpg", description: "Crispy ridge-cut potato chips seasoned with spicy masala." },
+            { id: 20, name: "Haldiram's Aloo Bhujia", category: "Snacks", price: 55.00, stock: 40, unit: "200g", image: "assets/images/products/namkeen.jpg", description: "Spicy crispy mint potato sev namkeen snack." },
+            { id: 21, name: "Tata Tea Gold Leaf & Dust", category: "Beverages", price: 145.00, stock: 35, unit: "250g", image: "assets/images/products/tea.jpg", description: "Fine tea blend with 15% gently rolled aromatic long leaves." },
+            { id: 22, name: "Nescafé Classic Instant Coffee", category: "Beverages", price: 195.00, stock: 25, unit: "100g", image: "assets/images/products/coffee.jpg", description: "Rich aroma and pure roasted coffee beans granules." },
+            { id: 23, name: "Real Activ 100% Orange Juice", category: "Beverages", price: 120.00, stock: 4, unit: "liter", image: "assets/images/products/juice.jpg", description: "Refreshing pure orange fruit juice with zero added sugar." },
+            { id: 24, name: "Britannia 100% Whole Wheat Bread", category: "Bakery", price: 45.00, stock: 20, unit: "pack", image: "assets/images/products/bread.jpg", description: "Soft, high-fiber freshly baked brown bread loaf." },
+            { id: 25, name: "Fresh Pav Buns (Pack of 6)", category: "Bakery", price: 30.00, stock: 30, unit: "pack", image: "assets/images/products/buns.jpg", description: "Super soft bakery pav buns, perfect for vada pav or bhaji." },
+            { id: 26, name: "Vim Lemon Dishwash Liquid Gel", category: "Household", price: 115.00, stock: 40, unit: "500ml", image: "assets/images/products/dishwash.jpg", description: "Concentrated lemon degreaser gel for squeaky clean utensils." },
+            { id: 27, name: "Surf Excel Easy Wash Detergent", category: "Household", price: 140.00, stock: 30, unit: "kg", image: "assets/images/products/detergent.jpg", description: "Superior stain removal washing powder for fabrics." }
+        ];
+
+        // State
+        let currentCategory = 'All';
+        let searchQuery = '';
+        let cart = JSON.parse(localStorage.getItem('db_cart') || '{}');
+        let currentOrder = null;
+        let currentStageIdx = 0;
+
+        function saveCart() {
+            localStorage.setItem('db_cart', JSON.stringify(cart));
+            updateCartBadge();
+            renderCart();
+        }
+
+        function formatPrice(amt) {
+            return '₹' + parseFloat(amt).toFixed(2);
+        }
+
+        // Render products
+        function renderProducts() {
+            const grid = document.getElementById('productsGrid');
+            const sortMode = document.getElementById('sortSelect').value;
+
+            let filtered = PRODUCTS_DATA.filter(p => {
+                const matchCat = (currentCategory === 'All' || p.category === currentCategory);
+                const matchSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                    p.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                    p.category.toLowerCase().includes(searchQuery.toLowerCase());
+                return matchCat && matchSearch;
+            });
+
+            if (sortMode === 'price-asc') filtered.sort((a,b) => a.price - b.price);
+            if (sortMode === 'price-desc') filtered.sort((a,b) => b.price - a.price);
+            if (sortMode === 'name-asc') filtered.sort((a,b) => a.name.localeCompare(b.name));
+
+            document.getElementById('catalogCount').innerText = `Showing ${filtered.length} product${filtered.length !== 1 ? 's' : ''}`;
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-12 text-center py-5 text-muted">
+                        <i class="bi bi-search fs-1 d-block mb-2 text-muted"></i>
+                        No products match your search or filter.
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(p => {
+                let badgeClass = 'in-stock';
+                let badgeText = 'In Stock';
+                if (p.stock <= 0) {
+                    badgeClass = 'out-stock';
+                    badgeText = 'Out of Stock';
+                } else if (p.stock <= 5) {
+                    badgeClass = 'low-stock';
+                    badgeText = `Only ${p.stock} left`;
+                }
+
+                const inCartQty = cart[p.id] || 0;
+                const isOutOfStock = p.stock <= 0;
+
+                return `
+                    <div class="col">
+                        <div class="product-card">
+                            <div class="product-img-wrap mb-2">
+                                <span class="stock-badge ${badgeClass}">${badgeText}</span>
+                                <img src="${p.image}" alt="${p.name}" class="product-img" onerror="this.src='assets/images/products/placeholder.jpg'">
+                            </div>
+                            <span class="text-muted text-uppercase fw-bold" style="font-size: 0.7rem;">${p.category}</span>
+                            <h6 class="fw-bold text-dark text-truncate mb-1" title="${p.name}">${p.name}</h6>
+                            <p class="text-muted small mb-2 text-truncate" style="font-size: 0.8rem;">${p.description}</p>
+                            
+                            <div class="d-flex align-items-baseline gap-1 mb-3">
+                                <span class="fw-bolder fs-5 text-dark">${formatPrice(p.price)}</span>
+                                <span class="text-muted small">/ ${p.unit}</span>
+                            </div>
+
+                            <div class="mt-auto">
+                                ${isOutOfStock ? `
+                                    <button class="btn btn-secondary w-100 btn-sm disabled" disabled>Out of Stock</button>
+                                ` : `
+                                    <div class="d-flex gap-2">
+                                        <div class="d-flex align-items-center">
+                                            <button class="stepper-btn" onclick="changeQty(${p.id}, -1)">-</button>
+                                            <input type="text" class="stepper-val" id="qty-${p.id}" value="1" readonly>
+                                            <button class="stepper-btn" onclick="changeQty(${p.id}, 1)">+</button>
+                                        </div>
+                                        <button class="btn btn-success flex-grow-1 btn-sm fw-bold" onclick="addToCartFromCard(${p.id})">
+                                            <i class="bi bi-cart-plus me-1"></i>Add
+                                        </button>
+                                    </div>
+                                `}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function changeQty(productId, delta) {
+            const input = document.getElementById(`qty-${productId}`);
+            if (!input) return;
+            const p = PRODUCTS_DATA.find(x => x.id === productId);
+            if (!p) return;
+            let val = parseInt(input.value) + delta;
+            val = Math.max(1, Math.min(val, p.stock));
+            input.value = val;
+        }
+
+        function addToCartFromCard(productId) {
+            const input = document.getElementById(`qty-${productId}`);
+            const qty = input ? parseInt(input.value) : 1;
+            const p = PRODUCTS_DATA.find(x => x.id === productId);
+            if (!p || p.stock <= 0) return;
+
+            const current = cart[productId] || 0;
+            const newQty = Math.min(p.stock, current + qty);
+            cart[productId] = newQty;
+            saveCart();
+
+            // Show Toast or indicator
+            const btn = event.currentTarget;
+            const orig = btn.innerHTML;
+            btn.innerHTML = `<i class="bi bi-check-lg"></i> Added!`;
+            btn.classList.replace('btn-success', 'btn-dark');
+            setTimeout(() => {
+                btn.innerHTML = orig;
+                btn.classList.replace('btn-dark', 'btn-success');
+            }, 1000);
+        }
+
+        function updateCartBadge() {
+            let total = 0;
+            for (let id in cart) {
+                total += cart[id];
+            }
+            document.getElementById('cartCountBadge').innerText = total;
+        }
+
+        function renderCart() {
+            const list = document.getElementById('cartItemsList');
+            const ids = Object.keys(cart).filter(id => cart[id] > 0);
+
+            if (ids.length === 0) {
+                list.innerHTML = `
+                    <div class="text-center py-5 text-muted">
+                        <i class="bi bi-basket2 fs-1 d-block mb-2 text-muted"></i>
+                        Your basket is currently empty.
+                        <div class="mt-3">
+                            <button class="btn btn-sm btn-outline-success" data-bs-dismiss="offcanvas">Start Shopping</button>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('cartSubtotalText').innerText = '₹0.00';
+                document.getElementById('cartDeliveryText').innerText = '₹30.00';
+                document.getElementById('cartTotalText').innerText = '₹0.00';
+                document.getElementById('deliveryTierText').innerText = 'Add ₹500.00 for FREE Delivery';
+                document.getElementById('deliveryTierPercent').innerText = '0%';
+                document.getElementById('deliveryTierBar').style.width = '0%';
+                document.getElementById('checkoutBtn').disabled = true;
+                return;
+            }
+
+            let subtotal = 0;
+            list.innerHTML = ids.map(id => {
+                const p = PRODUCTS_DATA.find(x => x.id == id);
+                if (!p) return '';
+                const qty = cart[id];
+                const itemSub = p.price * qty;
+                subtotal += itemSub;
+
+                return `
+                    <div class="d-flex align-items-center gap-3 p-2 border-bottom">
+                        <img src="${p.image}" alt="${p.name}" class="rounded border p-1" style="width: 50px; height: 50px; object-fit: contain;">
+                        <div class="flex-grow-1 min-w-0">
+                            <h6 class="mb-0 text-truncate fw-bold small">${p.name}</h6>
+                            <div class="text-muted small">${formatPrice(p.price)} / ${p.unit}</div>
+                            <div class="d-flex align-items-center gap-2 mt-1">
+                                <button class="btn btn-light btn-sm border py-0 px-2" onclick="updateCartItem(${p.id}, -1)">-</button>
+                                <span class="fw-bold small">${qty}</span>
+                                <button class="btn btn-light btn-sm border py-0 px-2" onclick="updateCartItem(${p.id}, 1)">+</button>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <div class="fw-bold small text-dark">${formatPrice(itemSub)}</div>
+                            <button class="btn btn-link text-danger p-0 small" onclick="removeCartItem(${p.id})"><i class="bi bi-trash"></i></button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            const deliveryFee = subtotal >= 500 ? 0 : 30;
+            const total = subtotal + deliveryFee;
+
+            document.getElementById('cartSubtotalText').innerText = formatPrice(subtotal);
+            document.getElementById('cartDeliveryText').innerHTML = deliveryFee === 0 ? '<span class="badge bg-success-subtle text-success">FREE</span>' : '₹30.00';
+            document.getElementById('cartTotalText').innerText = formatPrice(total);
+            document.getElementById('checkoutBtn').disabled = false;
+
+            // Tier
+            if (subtotal >= 500) {
+                document.getElementById('deliveryTierText').innerHTML = `<span class="text-success fw-bold"><i class="bi bi-gift-fill me-1"></i>You unlocked FREE Delivery!</span>`;
+                document.getElementById('deliveryTierPercent').innerText = '100%';
+                document.getElementById('deliveryTierBar').style.width = '100%';
+            } else {
+                const diff = 500 - subtotal;
+                const pct = Math.min(100, Math.round((subtotal / 500) * 100));
+                document.getElementById('deliveryTierText').innerText = `Add ${formatPrice(diff)} more for FREE Delivery`;
+                document.getElementById('deliveryTierPercent').innerText = pct + '%';
+                document.getElementById('deliveryTierBar').style.width = pct + '%';
+            }
+        }
+
+        function updateCartItem(id, delta) {
+            const p = PRODUCTS_DATA.find(x => x.id == id);
+            if (!p) return;
+            const newQty = (cart[id] || 0) + delta;
+            if (newQty <= 0) {
+                delete cart[id];
+            } else {
+                cart[id] = Math.min(p.stock, newQty);
+            }
+            saveCart();
+        }
+
+        function removeCartItem(id) {
+            delete cart[id];
+            saveCart();
+        }
+
+        function filterCategory(cat) {
+            currentCategory = cat;
+            document.querySelectorAll('.category-pill').forEach(btn => {
+                btn.classList.toggle('active', btn.innerText.includes(cat) || (cat === 'All' && btn.innerText.includes('All')));
+            });
+            document.getElementById('catalogTitle').innerText = cat === 'All' ? 'Grocery Catalog' : `${cat} Catalog`;
+            renderProducts();
+        }
+
+        function resetFilters() {
+            searchQuery = '';
+            document.getElementById('searchInput').value = '';
+            if (document.getElementById('mobileSearchInput')) document.getElementById('mobileSearchInput').value = '';
+            filterCategory('All');
+        }
+
+        function handleSearch() {
+            searchQuery = document.getElementById('searchInput').value;
+            renderProducts();
+        }
+
+        function handleMobileSearch() {
+            searchQuery = document.getElementById('mobileSearchInput').value;
+            renderProducts();
+        }
+
+        function openCart() {
+            const offcanvasEl = document.getElementById('cartOffcanvas');
+            const bsOffcanvas = bootstrap.Offcanvas.getOrCreateInstance(offcanvasEl);
+            bsOffcanvas.show();
+        }
+
+        function openCheckoutModal() {
+            // Close cart offcanvas
+            const offcanvasEl = document.getElementById('cartOffcanvas');
+            const bsOffcanvas = bootstrap.Offcanvas.getInstance(offcanvasEl);
+            if (bsOffcanvas) bsOffcanvas.hide();
+
+            // Calculate total
+            let subtotal = 0;
+            for (let id in cart) {
+                const p = PRODUCTS_DATA.find(x => x.id == id);
+                if (p) subtotal += p.price * cart[id];
+            }
+            const delivery = subtotal >= 500 ? 0 : 30;
+            document.getElementById('modalPayableText').innerText = formatPrice(subtotal + delivery);
+
+            const checkoutModal = new bootstrap.Modal(document.getElementById('checkoutModal'));
+            checkoutModal.show();
+        }
+
+        function handlePlaceOrder(e) {
+            e.preventDefault();
+            const orderId = 'DB-' + Math.floor(1000 + Math.random() * 9000);
+            
+            let items = [];
+            let subtotal = 0;
+            for (let id in cart) {
+                const p = PRODUCTS_DATA.find(x => x.id == id);
+                if (p) {
+                    const sub = p.price * cart[id];
+                    subtotal += sub;
+                    items.push({
+                        name: p.name,
+                        price: p.price,
+                        qty: cart[id],
+                        unit: p.unit,
+                        subtotal: sub,
+                        image: p.image
+                    });
+                }
+            }
+            const delivery = subtotal >= 500 ? 0 : 30;
+            const total = subtotal + delivery;
+
+            currentOrder = {
+                id: orderId,
+                name: document.getElementById('custName').value,
+                phone: document.getElementById('custPhone').value,
+                address: document.getElementById('custAddress').value,
+                items: items,
+                subtotal: subtotal,
+                delivery: delivery,
+                total: total,
+                stage: 0
+            };
+
+            // Clear Cart
+            cart = {};
+            saveCart();
+
+            // Hide checkout modal
+            bootstrap.Modal.getInstance(document.getElementById('checkoutModal')).hide();
+
+            // Populate success modal
+            document.getElementById('successOrderId').innerText = '#' + orderId;
+            document.getElementById('successItemsBody').innerHTML = items.map(it => `
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <img src="${it.image}" alt="" class="rounded border p-1" style="width: 32px; height: 32px; object-fit: contain;">
+                            <span>${it.name}</span>
+                        </div>
+                    </td>
+                    <td>${formatPrice(it.price)}</td>
+                    <td>${it.qty}</td>
+                    <td class="text-end fw-bold">${formatPrice(it.subtotal)}</td>
+                </tr>
+            `).join('') + `
+                <tr class="table-light">
+                    <td colspan="3" class="text-end fw-bold">Delivery Fee:</td>
+                    <td class="text-end fw-bold">${delivery === 0 ? '<span class="text-success">FREE</span>' : '₹30.00'}</td>
+                </tr>
+                <tr class="table-light">
+                    <td colspan="3" class="text-end fw-bold">Total Paid:</td>
+                    <td class="text-end fw-bolder text-success fs-6">${formatPrice(total)}</td>
+                </tr>
+            `;
+
+            currentStageIdx = 0;
+            updateTrackerUI();
+
+            const successModal = new bootstrap.Modal(document.getElementById('orderSuccessModal'));
+            successModal.show();
+        }
+
+        const STAGES = ['Pending', 'Confirmed', 'Preparing', 'Ready', 'Delivered'];
+        function updateTrackerUI() {
+            document.getElementById('trackerStatusBadge').innerText = STAGES[currentStageIdx];
+            const pct = (currentStageIdx / (STAGES.length - 1)) * 90;
+            document.getElementById('trackerProgressLine').style.width = pct + '%';
+
+            for (let i = 0; i < STAGES.length; i++) {
+                const el = document.getElementById(`step-${i}`);
+                if (!el) continue;
+                el.className = 'tracker-step';
+                if (i < currentStageIdx) {
+                    el.classList.add('completed');
+                } else if (i === currentStageIdx) {
+                    el.classList.add('active');
+                }
+            }
+        }
+
+        function advanceOrderStatus() {
+            currentStageIdx = (currentStageIdx + 1) % STAGES.length;
+            updateTrackerUI();
+        }
+
+        // Admin Table
+        function renderAdminTable() {
+            const tbody = document.getElementById('adminProductsTable');
+            tbody.innerHTML = PRODUCTS_DATA.map(p => `
+                <tr>
+                    <td><img src="${p.image}" class="rounded border p-1" style="width: 36px; height: 36px; object-fit: contain;"></td>
+                    <td><strong>${p.name}</strong></td>
+                    <td><span class="badge bg-light text-dark border">${p.category}</span></td>
+                    <td>${formatPrice(p.price)}</td>
+                    <td>
+                        <input type="number" min="0" value="${p.stock}" class="form-control form-control-sm text-center" style="width: 70px;" onchange="updateStock(${p.id}, this.value)">
+                    </td>
+                    <td>
+                        <span class="badge ${p.stock > 0 ? 'bg-success' : 'bg-danger'}">${p.stock > 0 ? 'Active' : 'Out of Stock'}</span>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function updateStock(id, newStock) {
+            const p = PRODUCTS_DATA.find(x => x.id == id);
+            if (p) {
+                p.stock = parseInt(newStock) || 0;
+                renderProducts();
+            }
+        }
+
+        // Init
+        document.addEventListener('DOMContentLoaded', () => {
+            renderProducts();
+            updateCartBadge();
+            renderCart();
+            renderAdminTable();
+        });
+    </script>
+</body>
+</html>
