@@ -33,11 +33,27 @@ function formatPrice(float|int|string $amount): string {
 }
 
 /**
- * Generate absolute URL for project assets and links
+ * Generate absolute URL for project assets and links (works in localhost subfolders & cloud root)
  */
 function baseUrl(string $path = ''): string {
+    static $base = null;
+    if ($base === null) {
+        $envBase = getenv('APP_BASE_URL');
+        if ($envBase !== false && $envBase !== '') {
+            $base = rtrim($envBase, '/');
+        } elseif (php_sapi_name() === 'cli') {
+            $base = '/freshcart';
+        } else {
+            $scriptDir = dirname($_SERVER['SCRIPT_NAME'] ?? '');
+            $cleanDir = str_replace('\\', '/', $scriptDir);
+            if (str_ends_with($cleanDir, '/admin')) {
+                $cleanDir = substr($cleanDir, 0, -6);
+            }
+            $base = ($cleanDir === '/' || $cleanDir === '.' || $cleanDir === '') ? '' : $cleanDir;
+        }
+    }
     $cleanPath = ltrim($path, '/');
-    return '/freshcart/' . $cleanPath;
+    return ($base === '' ? '' : $base) . '/' . $cleanPath;
 }
 
 /**

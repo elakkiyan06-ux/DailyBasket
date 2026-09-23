@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "8080:80"
+    environment:
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_NAME=freshcart_db
+      - DB_USER=dailybasket
+      - DB_PASS=dailybasket123
+    depends_on:
+      - db
+
+  db:
+    image: mariadb:10.6
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=freshcart_db
+      - MYSQL_USER=dailybasket
+      - MYSQL_PASSWORD=dailybasket123
+    volumes:
+      - ./database/freshcart_db.sql:/docker-entrypoint-initdb.d/init.sql
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:

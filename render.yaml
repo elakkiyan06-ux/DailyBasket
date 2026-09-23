@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: dailybasket-web
+    env: docker
+    plan: free
+    dockerfilePath: Dockerfile
+    envVars:
+      - key: DB_HOST
+        fromDatabase:
+          name: dailybasket-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: dailybasket-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: dailybasket-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: dailybasket-db
+          property: user
+      - key: DB_PASS
+        fromDatabase:
+          name: dailybasket-db
+          property: password
+
+databases:
+  - name: dailybasket-db
+    plan: free
